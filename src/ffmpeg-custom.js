@@ -11,7 +11,6 @@ if(process.argv[2]) {
 
     new Promise((resolve, reject) => {
         ffmpeg(process.argv[2] + '/video2.mp4')
-        // .inputOptions('-r 24')
         .save(process.argv[2] + '/1.mp4')
         .on('progress', (progress, event) => {
             console.log(`frames: ${progress.frames} \t percent: ${(progress.percent).toFixed()}% \t time: ${progress.timemark} \t target size: ${progress.targetSize}`);
