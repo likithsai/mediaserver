@@ -17,11 +17,14 @@ app.use(express.urlencoded({ extended: false }));
 //  scan files
 const scanFiles = (path) => {
     fs.readdirSync(path).forEach(f => {
+        const fileStat = fs.statSync(process.argv[2] + '/' + f);
+
         videos.push({
-            id: '7836743893498',
+            id: fileStat.dev + fileStat.ino,
             name: f,
             path: process.argv[2] + '/' + f,
-            size: utils.formatBytes(fs.statSync(process.argv[2] + '/' + f).size)
+            size: utils.formatBytes(fileStat.size),
+            createddate: fileStat.birthtime
         });
     });
 }
@@ -42,7 +45,7 @@ const startApp = () => {
     });
 
     app.get("/video/:id", (req, res) => {
-        const videoPath = `./public/video.mp4`;
+        const videoPath = videos.filter(obj => obj.id == req.params.id)[0].path;
         const videoStat = fs.statSync(videoPath);
         const fileSize = videoStat.size;
         const videoRange = req.headers.range;
