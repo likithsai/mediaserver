@@ -13,6 +13,19 @@ app.use(express.json());
 app.use(cors());
 app.use(express.urlencoded({ extended: false }));
 
+
+//  scan files
+const scanFiles = (path) => {
+    fs.readdirSync(path).forEach(f => {
+        videos.push({
+            id: '7836743893498',
+            name: f,
+            path: process.argv[2] + '/' + f,
+            size: utils.formatBytes(fs.statSync(process.argv[2] + '/' + f).size)
+        });
+    });
+}
+
 // app starting point
 const startApp = () => {
     app.listen(8000, function () {
@@ -62,16 +75,7 @@ const startApp = () => {
 if(process.argv[2]) {
     console.log('\x1b[36m%s\x1b[0m', "\n:: MEDIASERVER V 1.0 ::");
     console.log("Simple media server for managing videos and photos :)");
-
-    fs.readdirSync(process.argv[2]).forEach(f => {
-        videos.push({
-            id: '7836743893498',
-            name: f,
-            path: process.argv[2] + '/' + f,
-            size: utils.formatBytes(fs.statSync(process.argv[2] + '/' + f).size)
-        });
-    });
-
+    scanFiles(process.argv[2]);
     startApp();
 }
 
