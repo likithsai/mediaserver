@@ -21,7 +21,7 @@ app.use(express.urlencoded({ extended: false }));
 // app starting point
 const startApp = () => {
     app.listen(8000, function () {
-        console.log(`\nServerListening at`, `\x1b[4mhttp://localhost:${PORT}\x1b[0m`);
+        console.log(`Server Listening at`, `\x1b[4mhttp://localhost:${PORT}\x1b[0m`);
         console.log('\x1b[31m%s\x1b[0m', 'Press CNTRL+C to stop server');
     });
 
@@ -66,7 +66,7 @@ const startApp = () => {
 // check if path is passed or not
 if(process.argv[2]) {
     console.log('\x1b[36m%s\x1b[0m', "\n:: MEDIASERVER V 1.0 ::");
-    console.log("Simple media server for managing videos and photos :)\n");
+    console.log("Simple media server for managing videos and photos :)");
 
     fs.readdirSync(process.argv[2]).forEach(f => {
         videos.push({
@@ -75,8 +75,6 @@ if(process.argv[2]) {
             path: process.argv[2] + '/' + f,
             size: fs.statSync(process.argv[2] + '/' + f).size / (1024*1024)
         });
-
-        startApp();
 
         // new Promise((resolve, reject) => {
         //     ffmpeg(process.argv[2] + '/video2.mp4')
@@ -91,5 +89,7 @@ if(process.argv[2]) {
         //     });
         // });
     });
+
+    startApp();
 }
 
