@@ -4,13 +4,8 @@
 const express = require("express");
 const fs = require("fs");
 const cors = require("cors");
-const ffmpeg = require('fluent-ffmpeg');
-const ffmpegPath = require('@ffmpeg-installer/ffmpeg').path;
-const ffprobePath = require('@ffprobe-installer/ffprobe').path;
 
 const app = express();
-ffmpeg.setFfmpegPath(ffmpegPath);
-ffmpeg.setFfprobePath(ffprobePath);
 const PORT = process.env.port || 8000;
 const videos = [];
 
@@ -75,19 +70,6 @@ if(process.argv[2]) {
             path: process.argv[2] + '/' + f,
             size: fs.statSync(process.argv[2] + '/' + f).size / (1024*1024)
         });
-
-        // new Promise((resolve, reject) => {
-        //     ffmpeg(process.argv[2] + '/video2.mp4')
-        //     // .inputOptions('-r 24')
-        //     .save(process.argv[2] + '/1.mp4')
-        //     .on('progress', (progress, event) => {
-        //         console.log(`frames: ${progress.frames} \t percent: ${(progress.percent).toFixed()}% \t time: ${progress.timemark} \t target size: ${progress.targetSize}`);
-        //     })
-        //     .on('end', () => {
-        //         resolve('done');
-        //         startApp();
-        //     });
-        // });
     });
 
     startApp();
