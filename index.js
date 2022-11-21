@@ -5,8 +5,6 @@ const express = require("express");
 const fs = require("fs");
 const cors = require("cors");
 const ffmpeg = require('fluent-ffmpeg');
-const path = require('path');
-const crypto = require('./src/utils/crypto');
 const ffmpegPath = require('@ffmpeg-installer/ffmpeg').path;
 const ffprobePath = require('@ffprobe-installer/ffprobe').path;
 
@@ -15,13 +13,67 @@ ffmpeg.setFfmpegPath(ffmpegPath);
 ffmpeg.setFfprobePath(ffprobePath);
 const PORT = process.env.port || 8000;
 const videos = [];
+let APP_RUNNING = false;
 
 app.use(express.json());
 app.use(cors());
 app.use(express.urlencoded({ extended: false }));
 
+// app starting point
+const startApp = () => {
+    if(!APP_RUNNING) {
+        app.listen(8000, function () {
+            console.log(`\nServerListening at`, `\x1b[4mhttp://localhost:${PORT}\x1b[0m`);
+            console.log('\x1b[31m%s\x1b[0m', 'Press CNTRL+C to stop server');
+        });
+
+        app.get("/", (req, res) => {
+            res.sendFile(__dirname + "/template/index.html");
+        });
+        
+        app.get("/videos", (req,res) => {
+            res.json(videos);
+        });
+
+        app.get("/video/:id", (req, res) => {
+            const videoPath = `./public/video.mp4`;
+            const videoStat = fs.statSync(videoPath);
+            const fileSize = videoStat.size;
+            const videoRange = req.headers.range;
+
+            if (videoRange) {
+                const parts = videoRange.replace(/bytes=/, "").split("-");
+                const start = parseInt(parts[0], 10);
+                const end = parts[1] ? parseInt(parts[1], 10) : fileSize-1;
+                const chunksize = (end-start) + 1;
+                const file = fs.createReadStream(videoPath, {start, end});
+                const head = {
+                    'Content-Range': `bytes ${start}-${end}/${fileSize}`,
+                    'Accept-Ranges': 'bytes',
+                    'Content-Length': chunksize,
+                    'Content-Type': 'video/mp4',
+                };
+                res.writeHead(206, head);
+                file.pipe(res);
+            } else {
+                const head = {
+                    'Content-Length': fileSize,
+                    'Content-Type': 'video/mp4',
+                };
+                res.writeHead(200, head);
+                fs.createReadStream(videoPath).pipe(res);
+            }
+        });
+
+        APP_RUNNING = true;
+    }
+}
+
 // check if path is passed or not
 if(process.argv[2]) {
+    console.log('\x1b[36m%s\x1b[0m', "\n:: MEDIASERVER V 1.0 ::");
+    console.log("Simple media server for managing videos and photos :)\n");
+
     fs.readdirSync(process.argv[2]).forEach(f => {
         videos.push({
             id: '7836743893498',
@@ -30,55 +82,18 @@ if(process.argv[2]) {
             size: fs.statSync(process.argv[2] + '/' + f).size / (1024*1024)
         });
 
-        // ffmpeg(`${PUBLICPATH}/video1.mp4`)
-        //     .inputOptions('-r 24')
-        //     .save(`${PUBLICPATH}/1.mp4`);
-    });
-
-    app.get("/", (req, res) => {
-        res.sendFile(__dirname + "/template/index.html");
-    });
-    
-    app.get("/videos", (req,res) => {
-        res.json(videos);
-    });
-
-    app.get("/video/:id", (req, res) => {
-        const videoPath = `./public/video.mp4`;
-        const videoStat = fs.statSync(videoPath);
-        const fileSize = videoStat.size;
-        const videoRange = req.headers.range;
-        
-        if (videoRange) {
-            const parts = videoRange.replace(/bytes=/, "").split("-");
-            const start = parseInt(parts[0], 10);
-            const end = parts[1] ? parseInt(parts[1], 10) : fileSize-1;
-            const chunksize = (end-start) + 1;
-            const file = fs.createReadStream(videoPath, {start, end});
-            const head = {
-                'Content-Range': `bytes ${start}-${end}/${fileSize}`,
-                'Accept-Ranges': 'bytes',
-                'Content-Length': chunksize,
-                'Content-Type': 'video/mp4',
-            };
-            res.writeHead(206, head);
-            file.pipe(res);
-        } else {
-            const head = {
-                'Content-Length': fileSize,
-                'Content-Type': 'video/mp4',
-            };
-            res.writeHead(200, head);
-            fs.createReadStream(videoPath).pipe(res);
-        }
-    });
-    
-    
-    app.listen(8000, function () {
-        console.log('\x1b[36m%s\x1b[0m', "\n:: MEDIASERVER ::");
-        console.log("Simple media server for managing videos and photos :)");
-        console.log(`Listening at`, `\x1b[4mhttp://localhost:${PORT}\x1b[0m`);
-        console.log('\x1b[31m%s\x1b[0m', 'Press CNTRL+C to stop server');
+        new Promise((resolve, reject) => {
+            ffmpeg(process.argv[2] + '/video2.mp4')
+            // .inputOptions('-r 24')
+            .save(process.argv[2] + '/1.mp4')
+            .on('progress', (progress, event) => {
+                console.log(`frames: ${progress.frames} \t percent: ${(progress.percent).toFixed()}% \t time: ${progress.timemark} \t target size: ${progress.targetSize}`);
+            })
+            .on('end', () => {
+                resolve('done');
+                startApp();
+            });
+        });
     });
 }
 
