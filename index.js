@@ -4,28 +4,32 @@
 const express = require("express");
 const cors = require("cors");
 const fs = require('fs');
-const app = express();
+const ps = require('path');
 const utils = require('./src/utils/utils');
+const app = express();
 const PORT = process.env.port || 8000;
-const videos = [];
+let videos = [];
 
 app.use(express.json());
 app.use(cors());
 app.use(express.urlencoded({ extended: false }));
 
-
-//  scan files
 const scanFiles = (path) => {
     fs.readdirSync(path).forEach(f => {
-        const fileStat = fs.statSync(process.argv[2] + '/' + f);
+        const absPath = ps.join(path, f);
+        const fileStat = fs.statSync(absPath);
 
-        videos.push({
-            id: fileStat.dev + fileStat.ino,
-            name: f,
-            path: process.argv[2] + '/' + f,
-            size: utils.formatBytes(fileStat.size),
-            createddate: fileStat.birthtime
-        });
+        if(fileStat.isDirectory()) {
+            return scanFiles(absPath);
+        } else {
+            videos.push({
+                id: fileStat.dev + fileStat.ino,
+                name: f,
+                path: absPath,
+                size: utils.formatBytes(fileStat.size),
+                createddate: fileStat.birthtime
+            });
+        }
     });
 }
 
@@ -61,7 +65,9 @@ const startApp = () => {
                 'Content-Length': chunksize,
                 'Content-Type': 'video/mp4',
             };
-            res.writeHead(206, head);
+            res.writeHead(206, head).on('error', function(err) {
+                console.log('Error writing stream: ', err);
+            });;
             file.pipe(res);
         } else {
             const head = {
@@ -69,7 +75,9 @@ const startApp = () => {
                 'Content-Type': 'video/mp4',
             };
             res.writeHead(200, head);
-            fs.createReadStream(videoPath).pipe(res);
+            fs.createReadStream(videoPath).pipe(res).on('error', function(err) {
+                console.log('Error reading stream', err);
+            });;
         }
     });
 }
