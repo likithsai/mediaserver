@@ -2,10 +2,10 @@
 //  https://www.100ms.live/blog/create-video-streaming-server-nodejs
 
 const express = require("express");
-const fs = require("fs");
 const cors = require("cors");
-
+const fs = require('fs');
 const app = express();
+const utils = require('./src/utils/utils');
 const PORT = process.env.port || 8000;
 const videos = [];
 
@@ -68,7 +68,7 @@ if(process.argv[2]) {
             id: '7836743893498',
             name: f,
             path: process.argv[2] + '/' + f,
-            size: fs.statSync(process.argv[2] + '/' + f).size / (1024*1024)
+            size: utils.formatBytes(fs.statSync(process.argv[2] + '/' + f).size)
         });
     });
 
