@@ -4,8 +4,7 @@
 const express = require("express");
 const cors = require("cors");
 const fs = require('fs');
-const ps = require('path');
-const utils = require('./src/utils/utils');
+const fileUtil = require('./src/utils/fileUtils');
 const app = express();
 const PORT = process.env.port || 8000;
 let videos = [];
@@ -13,25 +12,6 @@ let videos = [];
 app.use(express.json());
 app.use(cors());
 app.use(express.urlencoded({ extended: false }));
-
-const scanFiles = (path) => {
-    fs.readdirSync(path).forEach(f => {
-        const absPath = ps.join(path, f);
-        const fileStat = fs.statSync(absPath);
-
-        if(fileStat.isDirectory()) {
-            return scanFiles(absPath);
-        } else {
-            videos.push({
-                id: fileStat.dev + fileStat.ino,
-                name: f,
-                path: absPath,
-                size: utils.formatBytes(fileStat.size),
-                createddate: fileStat.birthtime
-            });
-        }
-    });
-}
 
 // app starting point
 const startApp = () => {
@@ -86,7 +66,7 @@ const startApp = () => {
 if(process.argv[2]) {
     console.log('\x1b[36m%s\x1b[0m', "\n:: MEDIASERVER V 1.0 ::");
     console.log("Simple media server for managing videos and photos :)");
-    scanFiles(process.argv[2]);
+    videos = fileUtil.scanFiles(process.argv[2]);
     startApp();
 }
 
