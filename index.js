@@ -5,6 +5,7 @@ const express = require("express");
 const cors = require("cors");
 const fs = require('fs');
 const fileUtil = require('./src/utils/fileUtils');
+const { exit } = require("process");
 const app = express();
 const PORT = process.env.port || 8000;
 let videos = [];
@@ -68,5 +69,7 @@ if(process.argv[2]) {
     console.log("Simple media server for managing videos and photos :)");
     videos = fileUtil.scanFiles(process.argv[2]);
     startApp();
+} else {
+    console.log('Please enter folder path!');
 }
 
