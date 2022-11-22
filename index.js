@@ -5,7 +5,6 @@ const express = require("express");
 const cors = require("cors");
 const fs = require('fs');
 const fileUtil = require('./src/utils/fileUtils');
-const { exit } = require("process");
 const app = express();
 const PORT = process.env.port || 8000;
 let videos = [];
