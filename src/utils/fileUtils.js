@@ -4,7 +4,6 @@
 const fs = require('fs');
 const ps = require('path');
 const utils = require('./utils');
-
 var temp = [];
 
 const scanFiles = (path) => {
@@ -12,12 +11,13 @@ const scanFiles = (path) => {
         const absPath = ps.join(path, f);
         const fileStat = fs.statSync(absPath);
 
-        if(fileStat.isDirectory()) {
+        if (fileStat.isDirectory()) {
             return scanFiles(absPath);
         } else {
             temp.push({
                 id: fileStat.dev + fileStat.ino,
                 name: f,
+                basepath: path,
                 path: absPath,
                 size: utils.formatBytes(fileStat.size),
                 createddate: fileStat.birthtime

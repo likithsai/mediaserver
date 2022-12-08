@@ -23,11 +23,18 @@ const startApp = () => {
     app.get("/", (req, res) => {
         res.sendFile(__dirname + "/template/index.html");
     });
-        
-    app.get("/videos", (req,res) => {
-        res.json(videos);
+
+    //  used to scan all the files and optimise the vidoes
+    app.get("/videos/info", (req, res) => {
+        res.status(200).json(videos);
     });
 
+    app.get("/videos/:id/info", (req, res) => {
+        let temp = videos.filter(obj => obj.id == req.params.id)[0];
+        res.status(200).json(temp);
+    });
+
+    //  used to stream video files
     app.get("/video/:id", (req, res) => {
         const videoPath = videos.filter(obj => obj.id == req.params.id)[0].path;
         const videoStat = fs.statSync(videoPath);
@@ -36,34 +43,36 @@ const startApp = () => {
         if (videoRange) {
             const parts = videoRange.replace(/bytes=/, "").split("-");
             const start = parseInt(parts[0], 10);
-            const end = parts[1] ? parseInt(parts[1], 10) : fileSize-1;
-            const chunksize = (end-start) + 1;
-            const file = fs.createReadStream(videoPath, {start, end});
+            const end = parts[1] ? parseInt(parts[1], 10) : fileSize - 1;
+            const chunksize = (end - start) + 1;
+            const file = fs.createReadStream(videoPath, { start, end });
             const head = {
                 'Content-Range': `bytes ${start}-${end}/${fileSize}`,
                 'Accept-Ranges': 'bytes',
                 'Content-Length': chunksize,
                 'Content-Type': 'video/mp4',
             };
-            res.writeHead(206, head).on('error', function(err) {
+            res.writeHead(206, head).on('error', function (err) {
                 console.log('Error writing stream: ', err);
-            });;
-            file.pipe(res);
+            });
+            file.pipe(res).on('error', function (err) {
+                console.log('Error streaming files', err);
+            });
         } else {
             const head = {
                 'Content-Length': fileSize,
                 'Content-Type': 'video/mp4',
             };
             res.writeHead(200, head);
-            fs.createReadStream(videoPath).pipe(res).on('error', function(err) {
+            fs.createReadStream(videoPath).pipe(res).on('error', function (err) {
                 console.log('Error reading stream', err);
-            });;
+            });
         }
     });
 }
 
 // check if path is passed or not
-if(process.argv[2]) {
+if (process.argv[2]) {
     console.log('\x1b[36m%s\x1b[0m', "\n:: MEDIASERVER V 1.0 ::");
     console.log("Simple media server for managing videos and photos :)");
     videos = fileUtil.scanFiles(process.argv[2]);

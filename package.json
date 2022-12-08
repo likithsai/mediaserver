@@ -19,15 +19,9 @@
   },
   "homepage": "https://github.com/likithsai/mediaserver#readme",
   "dependencies": {
-    "@ffmpeg-installer/ffmpeg": "^1.1.0",
-    "@ffmpeg/core": "^0.11.0",
-    "@ffmpeg/ffmpeg": "^0.11.6",
-    "@ffprobe-installer/ffprobe": "^1.4.1",
     "cors": "^2.8.5",
     "crypto": "^1.0.1",
     "express": "^4.18.2",
-    "ffmpeg-on-progress": "^1.0.0",
-    "fluent-ffmpeg": "^2.1.2",
     "nodemon": "^2.0.20"
   }
 }
