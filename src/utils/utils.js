@@ -1,6 +1,8 @@
 //  utils.js
 //  contains utility function
 
+const spawn = require('child_process').spawn;
+
 function formatBytes(bytes, decimals = 2) {
     if (!+bytes) return '0 Bytes'
     const k = 1024
@@ -10,4 +12,12 @@ function formatBytes(bytes, decimals = 2) {
     return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`
 }
 
-module.exports = { formatBytes };
+function executeCMD(cmd, args, onData, onFinish) {
+    var proc = spawn(cmd, args);
+    proc.stdout.on('data', onData);
+    proc.stderr.setEncoding("utf8")
+    proc.stderr.on('data', err => console.log(err));
+    proc.on('close', onFinish);
+}
+
+module.exports = { formatBytes, executeCMD };
