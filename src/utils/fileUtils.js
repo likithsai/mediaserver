@@ -3,6 +3,8 @@
 
 const fs = require('fs');
 const ps = require('path');
+const crypto = require('crypto');
+const mime = require('mime');
 const utils = require('./utils');
 var temp = [];
 
@@ -15,11 +17,11 @@ const scanFiles = (path) => {
             return scanFiles(absPath);
         } else {
             temp.push({
-                id: fileStat.dev + fileStat.ino,
+                id: crypto.randomBytes(5).toString("hex"),
                 name: f,
-                basepath: path,
                 path: absPath,
                 size: utils.formatBytes(fileStat.size),
+                mimetype: mime.getType(absPath.split('.')[1]) || '',
                 createddate: fileStat.birthtime
             });
         }
