@@ -22,6 +22,7 @@ const scanFiles = (path) => {
                 path: absPath,
                 size: utils.formatBytes(fileStat.size),
                 mimetype: mime.getType(absPath.split('.')[1]) || '',
+                hash: calculateChecksumOfFile(absPath),
                 createddate: fileStat.birthtime
             });
         }
@@ -43,6 +44,11 @@ const optimizeVideo = (fileList) => {
             console.log('\x1b[36m%s\x1b[0m', `finished optimizing ${element.name} video file`);
         });
     });
+}
+
+const calculateChecksumOfFile = (path) => {
+    const file = fs.readFileSync(path);
+    return crypto.createHash('sha1').update(file).digest("hex");
 }
 
 module.exports = { scanFiles, fileDir, optimizeVideo };
