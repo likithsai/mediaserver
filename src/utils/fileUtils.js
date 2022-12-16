@@ -21,7 +21,7 @@ const scanFiles = (path) => {
                 name: f,
                 path: absPath,
                 size: utils.formatBytes(fileStat.size),
-                mimetype: mime.getType(absPath.split('.')[1]) || '',
+                mimetype: mime.getType(absPath.split('.')[1]) || null,
                 hash: calculateChecksumOfFile(absPath),
                 createddate: fileStat.birthtime
             });
