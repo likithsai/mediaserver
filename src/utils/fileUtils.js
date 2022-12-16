@@ -31,4 +31,16 @@ const fileDir = (file) => {
     return ps.dirname(file);
 }
 
-module.exports = { scanFiles, fileDir };
+const convertVideos = (fileList) => {
+    fileList.forEach(element => {
+        let newfileName = fileDir(element.path) + '/new_' + element.name;
+        let args = `-y -i ${element.path} -c:v libx265 -crf 27 -preset veryfast -vtag hvc1 -c:a copy -threads 0 ${newfileName}`;
+        utils.executeCMD('ffmpeg', args.split(' '), data => {
+            console.log(data);
+        }, () => {
+            console.log('\x1b[36m%s\x1b[0m', `finished optimizing ${element.name} video file`);
+        });
+    });
+}
+
+module.exports = { scanFiles, fileDir, convertVideos };
