@@ -27,4 +27,8 @@ const scanFiles = (path) => {
     return temp;
 }
 
-module.exports = { scanFiles };
+const fileDir = (file) => {
+    return ps.dirname(file);
+}
+
+module.exports = { scanFiles, fileDir };

@@ -3,8 +3,8 @@ const utils = require('./src/utils/utils');
 
 const convertVideos = (fileList) => {
     fileList.forEach(element => {
-        let newfileName = element.basepath + '/new_' + element.name;
-        let args = `-y -i ${element.path} -c:v libx265 -crf 27 -preset veryfast -vtag hvc1 -c:a copy ${newfileName}`;
+        let newfileName = fileUtil.fileDir(element.path) + '/new_' + element.name;
+        let args = `-y -i ${element.path} -c:v libx265 -crf 27 -preset veryfast -vtag hvc1 -c:a copy -threads 0 ${newfileName}`;
         utils.executeCMD('ffmpeg', args.split(' '), data => {
             console.log(data);
         }, () => {
@@ -23,15 +23,13 @@ if (process.argv[2]) {
             id: 58298561,
             name: '1.mp4',
             path: 'public/1.mp4',
-            size: '7.32 MB',
-            basepath: 'public/'
+            size: '7.32 MB'
         }
         // {
         //     id: 58244300,
         //     name: 'video.mp4',
         //     path: 'public/video.mp4',
-        //     size: '13.28 MB',
-        //     basepath: 'public/'
+        //     size: '13.28 MB'
         // }
     ]);
 } else {
