@@ -2,16 +2,24 @@
 //  https://www.100ms.live/blog/create-video-streaming-server-nodejs
 
 const express = require("express");
+const expressip = require('express-ip');
 const cors = require("cors");
 const fs = require('fs');
+const morgan = require("morgan");
 const fileUtil = require('./src/utils/fileUtils');
 const app = express();
 const PORT = process.env.port || 8000;
 let videos = [];
 
 app.use(express.json());
+app.use(expressip().getIpInfoMiddleware);
 app.use(cors());
 app.use(express.urlencoded({ extended: false }));
+app.use(morgan('dev'));
+app.use((req, res, next) => {
+    console.log({ ip: req.ipInfo.ip, useagent: req.headers["user-agent"] });
+    next();
+});
 
 // app starting point
 const startApp = () => {
@@ -29,7 +37,7 @@ const startApp = () => {
         res.status(200).json(videos);
     });
 
-    app.get("/videos/:id/info", (req, res) => {
+    app.get("/video/:id/info", (req, res) => {
         let temp = videos.filter(obj => obj.id == req.params.id)[0];
         res.status(200).json(temp);
     });
