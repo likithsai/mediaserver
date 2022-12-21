@@ -7,15 +7,20 @@ const cors = require("cors");
 const fs = require('fs');
 const morgan = require("morgan");
 const fileUtil = require('./src/utils/fileUtils');
+const path = require("path");
 const app = express();
 const PORT = process.env.port || 8000;
+const logStr = `:user-agent \n:date[web] - :status :remote-addr :method :url HTTP/:http-version :status :res[content-length] - :response-time ms`;
 let videos = [];
 
 app.use(express.json());
 app.use(expressip().getIpInfoMiddleware);
 app.use(cors());
 app.use(express.urlencoded({ extended: false }));
-app.use(morgan(':user-agent :date[web] - :status :remote-addr :method :url HTTP/:http-version :status :res[content-length] - :response-time ms'));
+app.use(morgan(logStr));
+app.use(morgan(logStr, {
+    stream: fs.createWriteStream(path.join(__dirname, 'access.log'), { flags: 'a' })
+}));
 
 // app starting point
 const startApp = () => {
