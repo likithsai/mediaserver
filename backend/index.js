@@ -10,7 +10,7 @@ const fileUtil = require('./src/utils/fileUtils');
 const path = require("path");
 const app = express();
 const PORT = process.env.port || 8000;
-const logStr = `:user-agent \n:date[web] - :status :remote-addr :method :url HTTP/:http-version :status :res[content-length] - :response-time ms`;
+const logStr = `:user-agent \n:[date[web]] - :status :remote-addr :method :url HTTP/:http-version :status :res[content-length] - :response-time ms`;
 let videos = [];
 
 app.use(express.json());
