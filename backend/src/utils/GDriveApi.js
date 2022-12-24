@@ -9,11 +9,6 @@ const SCOPES = [
 
 class GDriveApi {
     constructor() {
-        fs.readFile('credentials.json', (err, content) => {
-            if (err) {
-                return console.log('Error loading client secret file:', err);
-            }
-        });
     }
 }
 
