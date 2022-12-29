@@ -6,6 +6,7 @@ const ps = require('path');
 const crypto = require('crypto');
 const mime = require('mime');
 const utils = require('./utils');
+const { consoleLogColors } = require('../const/const');
 var temp = [];
 
 const scanFiles = (path) => {
@@ -41,7 +42,7 @@ const optimizeVideo = (fileList, params) => {
         utils.executeCMD('ffmpeg', args.split(' '), data => {
             console.log(data);
         }, () => {
-            console.log('\x1b[36m%s\x1b[0m', `finished optimizing ${element.name} video file`);
+            console.log(consoleLogColors.SUCCESS_COLOR, `finished optimizing ${element.name} video file`);
             console.log(params);
         });
     });
