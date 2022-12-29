@@ -34,7 +34,7 @@ const fileDir = (file) => {
     return ps.dirname(file);
 }
 
-const optimizeVideo = (fileList) => {
+const optimizeVideo = (fileList, params) => {
     fileList.forEach(element => {
         let newfileName = fileDir(element.path) + '/new_' + element.name;
         let args = `-y -hide_banner -v panic -stats -i ${element.path} -c:v libx265 -crf 27 -preset veryfast -vtag hvc1 -c:a copy -threads 0 ${newfileName}`;
@@ -42,6 +42,7 @@ const optimizeVideo = (fileList) => {
             console.log(data);
         }, () => {
             console.log('\x1b[36m%s\x1b[0m', `finished optimizing ${element.name} video file`);
+            console.log(params);
         });
     });
 }
