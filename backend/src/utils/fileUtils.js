@@ -6,7 +6,7 @@ const ps = require('path');
 const crypto = require('crypto');
 const mime = require('mime');
 const utils = require('./utils');
-const { consoleLogColors } = require('../const/const');
+const { consoleLogColors, paramHandler } = require('../const/const');
 var temp = [];
 
 const scanFiles = (path) => {
@@ -43,9 +43,24 @@ const optimizeVideo = (fileList, params) => {
             console.log(data);
         }, () => {
             console.log(consoleLogColors.SUCCESS_COLOR, `finished optimizing ${element.name} video file`);
-            console.log(params);
+            if (params.includes(paramHandler.GENERATE_SCREENSHOT)) {
+                console.log(generateScreenshots(newfileName));
+            }
+            if (params.includes(paramHandler.DELETE_ORIGIN_FILE)) {
+                deleteOriginalFile(element.path)
+            }
         });
     });
+}
+
+const generateScreenshots = (path) => {
+    let newfileName = fileDir(path) + '/' + calculateChecksumOfFile(path);
+    const cmd = `ffmpeg -ss 146 -i ${path} -y -an -t 4 ${newfileName}`;
+    return cmd;
+}
+
+const deleteOriginalFile = (path) => {
+    return path;
 }
 
 const calculateChecksumOfFile = (path) => {
