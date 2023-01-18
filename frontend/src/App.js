@@ -3,7 +3,9 @@ import './scss/App.scss';
 
 const App = () => {
     return (
-        <h2>react app works!</h2>
+        <h1 className="tw-text-3xl tw-font-bold tw-underline">
+            Hello world!
+        </h1>
     )
 }
 
