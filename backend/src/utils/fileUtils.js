@@ -44,7 +44,7 @@ const optimizeVideo = (fileList, params) => {
         }, () => {
             console.log(consoleLogColors.SUCCESS_COLOR, `finished optimizing ${element.name} video file`);
             if (params.includes(paramHandler.GENERATE_SCREENSHOT)) {
-                console.log(generateScreenshots(newfileName));
+                generateScreenshots(newfileName);
             }
             if (params.includes(paramHandler.DELETE_ORIGIN_FILE)) {
                 deleteOriginalFile(element.path)

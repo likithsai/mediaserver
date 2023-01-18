@@ -2,7 +2,7 @@
 
 import React from "react";
 
-const Header = () => {
+const Header = (props) => {
     return (
         <header>
             <nav class="tw-bg-white tw-border-gray-200 tw-px-4 lg:tw-px-6 tw-py-2.5 dark:tw-bg-gray-800">
