@@ -55,8 +55,13 @@ const optimizeVideo = (fileList, params) => {
 
 const generateScreenshots = (path) => {
     let newfileName = fileDir(path) + '/' + calculateChecksumOfFile(path);
-    const cmd = `ffmpeg -ss 146 -i ${path} -y -an -t 4 ${newfileName}`;
-    return cmd;
+    const args = `-y -i ${path} -vf "select='not(mod(n,10))',setpts='N/(30*TB)'" -f image2 iamge%03d.jpg`;
+
+    utils.executeCMD('ffmpeg', args.split(' '), data => {
+        console.log(data);
+    }, () => {
+        console.log(consoleLogColors.SUCCESS_COLOR, `finished generating screenshot for ${path.basename(path)} video file`);
+    });
 }
 
 const deleteOriginalFile = (path) => {
