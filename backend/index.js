@@ -8,6 +8,7 @@ const fs = require('fs');
 const morgan = require("morgan");
 const fileUtil = require('./src/utils/fileUtils');
 const path = require("path");
+const ffmpeg = require('fluent-ffmpeg');
 const app = express();
 const PORT = process.env.port || 8000;
 const logStr = `\n:date[iso] :remote-addr :method :url :status :res[content-length] :response-time ms\n:user-agent`;
@@ -45,7 +46,10 @@ const startApp = () => {
 
     //  get screenshot from video
     app.use("/:id/thumbnail", (req, res) => {
-        console.log(req.params.id);
+        let filteredFile = videos.filter(obj => obj.id == req.params.id)[0];
+        res.status(200).json(filteredFile);
+
+        // https://github.com/fluent-ffmpeg/node-fluent-ffmpeg/blob/master/examples/thumbnails.js
     });
 
     //  used to stream video files
