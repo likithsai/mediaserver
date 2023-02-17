@@ -34,17 +34,17 @@ const startApp = () => {
     });
 
     //  used to scan all the files and optimise the vidoes
-    app.get("/videos/info", (req, res) => {
+    app.get("/info", (req, res) => {
         res.status(200).json(videos);
     });
 
-    app.get("/video/:id/info", (req, res) => {
+    app.get("/:id/info", (req, res) => {
         let temp = videos.filter(obj => obj.id == req.params.id)[0];
         res.status(200).json(temp);
     });
 
     //  used to stream video files
-    app.get("/video/:id", (req, res) => {
+    app.get("/:id", (req, res) => {
         const videoPath = videos.filter(obj => obj.id == req.params.id)[0].path;
         const videoStat = fs.statSync(videoPath);
         const fileSize = videoStat.size;
