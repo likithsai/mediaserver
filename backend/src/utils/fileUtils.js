@@ -7,6 +7,7 @@ const crypto = require('crypto');
 const mime = require('mime');
 const utils = require('./utils');
 const { appConstants } = require('../const/const');
+const ffmpeg = require('fluent-ffmpeg');
 var temp = [];
 
 const scanFiles = (path) => {
@@ -37,19 +38,37 @@ const fileDir = (file) => {
 
 const optimizeVideo = (fileList, params) => {
     fileList.forEach(element => {
-        let newfileName = fileDir(element.path) + '/new_' + element.name;
-        let args = `-y -hide_banner -v panic -stats -i ${element.path} -c:v libx265 -crf 27 -preset veryfast -vtag hvc1 -c:a copy -threads 0 ${newfileName}`;
-        utils.executeCMD('ffmpeg', args.split(' '), data => {
-            console.log(data);
-        }, () => {
-            console.log(appConstants.SUCCESS_COLOR, `finished optimizing ${element.name} video file`);
-            if (params.includes(appConstants.GENERATE_SCREENSHOT)) {
-                generateScreenshots(newfileName);
-            }
-            if (params.includes(appConstants.DELETE_ORIGIN_FILE)) {
-                deleteOriginalFile(element.path)
-            }
-        });
+        let newFileName = fileDir(element.path) + '/new_' + element.name;
+        // let args = `-y -hide_banner -v panic -stats -i ${element.path} -c:v libx265 -crf 27 -preset veryfast -vtag hvc1 -c:a copy -threads 0 ${newfileName}`;
+        // utils.executeCMD('ffmpeg', args.split(' '), data => {
+        //     console.log(data);
+        // }, () => {
+        //     console.log(appConstants.SUCCESS_COLOR, `finished optimizing ${element.name} video file`);
+        //     if (params.includes(appConstants.GENERATE_SCREENSHOT)) {
+        //         generateScreenshots(newfileName);
+        //     }
+        //     if (params.includes(appConstants.DELETE_ORIGIN_FILE)) {
+        //         deleteOriginalFile(element.path)
+        //     }
+        // });
+
+        console.log('Input File: ' + element.path);
+        ffmpeg(element.path).addInputOption([
+            '-y',
+            '-hide_banner',
+            '-v panic',
+            '-stats',
+            '-c:v libx265',
+            '-crf 27',
+            '-preset superfast',
+            '-vtag hvc1',
+            '-c:a copy',
+            '-threads 0'
+        ]).on('end', function () {
+            console.log('File saved in ' + newFileName);
+        }).on('error', function (err) {
+            console.log('an error happened: ' + err.message);
+        }).save(newFileName);
     });
 }
 
