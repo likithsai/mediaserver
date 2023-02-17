@@ -1,11 +1,10 @@
-const paramHandler = {
+const appConstants = {
     COMMAND_ARGV: process.argv,
     FOLDER_PATH: process.argv[2],
     GENERATE_SCREENSHOT: '--generate-screenshot',
-    DELETE_ORIGIN_FILE: '--delete-orig-file'
-}
+    DELETE_ORIGIN_FILE: '--delete-orig-file',
 
-const consoleLogColors = {
+    // colors
     ERROR_COLOR: '\x1b[31m%s\x1b[0m',
     SUCCESS_COLOR: '\x1b[32m%s\x1b[0m',
     WARN_COLOR: '\x1b[33m%s\x1b[0m',
@@ -37,4 +36,5 @@ const consoleLogColors = {
     BGGRAY: "\x1b[100m%s\x1b[0m"
 }
 
-module.exports = { paramHandler, consoleLogColors };
+
+module.exports = { appConstants };
