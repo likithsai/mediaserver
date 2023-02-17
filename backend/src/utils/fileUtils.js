@@ -53,7 +53,7 @@ const optimizeVideo = (fileList, params) => {
         // });
 
         console.log('Input File: ' + element.path);
-        ffmpeg(element.path).addInputOption([
+        ffmpeg(element.path).addOutputOption([
             '-y',
             '-hide_banner',
             '-v panic',
