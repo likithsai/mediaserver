@@ -53,16 +53,16 @@ const streamVideoFiles = (filePath, res) => {
         .outputOptions(['-movflags isml+frag_keyframe'])
         .toFormat('mp4')
         .withAudioCodec('copy')
-        .on('error', function (err, stdout, stderr) {
-            console.log('an error happened: ' + err.message);
-            console.log('ffmpeg stdout: ' + stdout);
-            console.log('ffmpeg stderr: ' + stderr);
+        .on('progress', function (progress) {
+            console.log('Processing: ' + progress.percent.toFixed(2) + '%');
         })
         .on('end', function () {
             console.log('Processing finished !');
         })
-        .on('progress', function (progress) {
-            console.log('Processing: ' + progress.percent + '% done');
+        .on('error', function (err, stdout, stderr) {
+            console.log('an error happened: ' + err.message);
+            console.log('ffmpeg stdout: ' + stdout);
+            console.log('ffmpeg stderr: ' + stderr);
         })
         .pipe(res, { end: true });
 

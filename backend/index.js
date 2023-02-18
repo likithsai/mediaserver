@@ -53,7 +53,7 @@ const startApp = () => {
 
     //  used to stream video files
     app.get("/:id", (req, res) => {
-        fileUtil.streamVideoFiles('public/1.mp4', res);
+        fileUtil.streamVideoFiles(videos.filter(obj => obj.id == req.params.id)[0].path, res);
         // const videoPath = videos.filter(obj => obj.id == req.params.id)[0].path;
         // fileUtil.streamVideoFiles(videoPath);
 
