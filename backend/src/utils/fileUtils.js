@@ -71,8 +71,6 @@ const streamVideoFiles = (filePath, res) => {
 const optimizeVideo = (fileList, params) => {
     fileList.forEach(element => {
         let newFileName = fileDir(element.path) + '/new_' + element.name;
-
-        console.log('Input File: ' + element.path);
         ffmpeg(element.path).addOutputOption([
             '-y',
             '-hide_banner',
@@ -84,8 +82,12 @@ const optimizeVideo = (fileList, params) => {
             '-vtag hvc1',
             '-c:a copy',
             '-threads 0'
-        ]).on('end', function () {
-            console.log('File saved in ' + newFileName);
+        ]).on('start', (commandLine) => {
+            console.log(appConstants.FGMAGENTA, 'Converting ' + element.path + ' media file');
+        }).on('progress', function (progress) {
+            console.log(appConstants.WARN_COLOR, progress.percent.toFixed(2) + '%');
+        }).on('end', function () {
+            console.log(appConstants.SUCCESS_COLOR, 'File saved in ' + newFileName);
 
             // if --generate-screenshot param is passed
             if (params.includes(appConstants.GENERATE_SCREENSHOT)) {
@@ -97,7 +99,7 @@ const optimizeVideo = (fileList, params) => {
                 deleteOriginalFile(element.path);
             }
         }).on('error', function (err) {
-            console.log('an error happened: ' + err.message);
+            console.log(appConstants.ERROR_COLOR, 'an error happened: ' + err.message);
         }).save(newFileName);
     });
 }
@@ -113,10 +115,19 @@ const generateScreenshots = (path) => {
         .duration(gifDuration)
         .fps(gifFPS)
         .output(newfileName)
+        .on('start', (commandLine) => {
+            console.log(appConstants.FGMAGENTA, 'Generating thumbnails for ' + path);
+        })
+        .on('progress', function (progress) {
+            console.log(appConstants.WARN_COLOR, progress.percent.toFixed(2) + '%');
+        })
         .on('end', function (err) {
             if (!err) {
-                console.log('Screenshot generated')
+                console.log(appConstants.SUCCESS_COLOR, 'Screenshot generated')
             }
+        })
+        .on('error', function (err) {
+            console.log(appConstants.ERROR_COLOR, 'an error happened: ' + err.message);
         })
         .run();
 }
