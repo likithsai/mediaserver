@@ -7,7 +7,12 @@ const crypto = require('crypto');
 const mime = require('mime');
 const utils = require('./utils');
 const { appConstants } = require('../const/const');
-const ffmpeg = require('fluent-ffmpeg');
+var ffmpegPath = require('@ffmpeg-installer/ffmpeg').path;
+var ffprobePath = require('@ffprobe-installer/ffprobe').path;
+var ffmpeg = require('fluent-ffmpeg');
+
+ffmpeg.setFfmpegPath(ffmpegPath);
+ffmpeg.setFfprobePath(ffprobePath);
 var temp = [];
 
 const scanFiles = (path) => {
