@@ -10,6 +10,7 @@ const { appConstants } = require('../const/const');
 var ffmpegPath = require('@ffmpeg-installer/ffmpeg').path;
 var ffprobePath = require('@ffprobe-installer/ffprobe').path;
 var ffmpeg = require('fluent-ffmpeg');
+var spawn = require('child_process').spawn;
 
 ffmpeg.setFfmpegPath(ffmpegPath);
 ffmpeg.setFfprobePath(ffprobePath);
@@ -39,6 +40,32 @@ const scanFiles = (path) => {
 
 const fileDir = (file) => {
     return ps.dirname(file);
+}
+
+const streamVideoFiles = (filePath, res) => {
+    var stat = fs.statSync(filePath);
+    res.writeHead(200, {
+        'Content-Type': 'video/mp4',
+        'Content-Length': stat.size
+    });
+
+    return ffmpeg(filePath)
+        .outputOptions(['-movflags isml+frag_keyframe'])
+        .toFormat('mp4')
+        .withAudioCodec('copy')
+        .on('error', function (err, stdout, stderr) {
+            console.log('an error happened: ' + err.message);
+            console.log('ffmpeg stdout: ' + stdout);
+            console.log('ffmpeg stderr: ' + stderr);
+        })
+        .on('end', function () {
+            console.log('Processing finished !');
+        })
+        .on('progress', function (progress) {
+            console.log('Processing: ' + progress.percent + '% done');
+        })
+        .pipe(res, { end: true });
+
 }
 
 const optimizeVideo = (fileList, params) => {
@@ -103,4 +130,4 @@ const calculateChecksumOfFile = (path) => {
     return crypto.createHash('sha1').update(file).digest("hex");
 }
 
-module.exports = { scanFiles, fileDir, optimizeVideo };
+module.exports = { scanFiles, fileDir, optimizeVideo, streamVideoFiles };
