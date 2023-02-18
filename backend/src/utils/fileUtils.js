@@ -10,7 +10,6 @@ const { appConstants } = require('../const/const');
 var ffmpegPath = require('@ffmpeg-installer/ffmpeg').path;
 var ffprobePath = require('@ffprobe-installer/ffprobe').path;
 var ffmpeg = require('fluent-ffmpeg');
-var spawn = require('child_process').spawn;
 
 ffmpeg.setFfmpegPath(ffmpegPath);
 ffmpeg.setFfprobePath(ffprobePath);
@@ -50,7 +49,7 @@ const streamVideoFiles = (filePath, res) => {
     });
 
     return ffmpeg(filePath)
-        .outputOptions(['-movflags isml+frag_keyframe'])
+        .outputOptions(['-movflags isml+frag_keyframe', '-vprofile high', '-threads 0'])
         .toFormat('mp4')
         .withAudioCodec('copy')
         .on('progress', function (progress) {
@@ -85,10 +84,9 @@ const optimizeVideo = (fileList, params) => {
         ]).on('start', (commandLine) => {
             console.log(appConstants.FGMAGENTA, 'Converting ' + element.path + ' media file');
         }).on('progress', function (progress) {
-            console.clear();
-            console.log(appConstants.WARN_COLOR, Math.round(progress.percent.toFixed(2)) + '%');
+            console.log(appConstants.WARN_COLOR, element.path, " [" + Math.round(progress.percent.toFixed(2)) + '%]');
         }).on('end', function () {
-            console.log(appConstants.SUCCESS_COLOR, 'File saved in ' + newFileName);
+            console.log(appConstants.SUCCESS_COLOR, 'Optimized file saved in ' + newFileName);
 
             // if --generate-screenshot param is passed
             if (params.includes(appConstants.GENERATE_SCREENSHOT)) {
@@ -120,7 +118,7 @@ const generateScreenshots = (path) => {
             console.log(appConstants.FGMAGENTA, 'Generating thumbnails for ' + path);
         })
         .on('progress', function (progress) {
-            console.log(appConstants.WARN_COLOR, Math.round(progress.percent.toFixed(2)) + '%');
+            console.log(appConstants.WARN_COLOR, path, " [" + Math.round(progress.percent.toFixed(2)) + '%]');
         })
         .on('end', function (err) {
             if (!err) {
