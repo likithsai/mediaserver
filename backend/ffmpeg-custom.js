@@ -3,8 +3,8 @@ const { appConstants } = require('./src/const/const');
 
 //  check if folder path params is passed or not
 if (appConstants.FOLDER_PATH) {
-    console.log(appConstants.WARN_COLOR, "\n:: ffmpeg-custom V 1.0 ::");
-    console.log(appConstants.DEFAULT_COLOR, "Simple media scanner for managing videos and photos :) \n");
+    console.log(appConstants.WARN_COLOR, appConstants.APPNAME + ' ' + appConstants.APPVERSION);
+    console.log(appConstants.DEFAULT_COLOR, appConstants.APPDESC + '\n');
     // fileUtil.optimizeVideo(fileUtil.scanFiles(appConstants.FOLDER_PATH), appConstants.COMMAND_ARGV);
     fileUtil.optimizeVideo([
         {

@@ -1,4 +1,10 @@
 const appConstants = {
+    // app details
+    APPNAME: 'FFMPEG',
+    APPVERSION: 'V 1.0',
+    APPDESC: 'A simple media server',
+
+    // commands
     COMMAND_ARGV: process.argv,
     FOLDER_PATH: process.argv[2],
     GENERATE_SCREENSHOT: '--generate-screenshot',
