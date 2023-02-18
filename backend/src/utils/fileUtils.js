@@ -84,7 +84,7 @@ const optimizeVideo = (fileList, params) => {
         ]).on('start', (commandLine) => {
             console.log(appConstants.FGMAGENTA, 'Converting ' + element.path + ' media file');
         }).on('progress', function (progress) {
-            console.log(appConstants.WARN_COLOR, element.path, " [" + Math.round(progress.percent.toFixed(2)) + '%]');
+            console.log(appConstants.WARN_COLOR, ps.basename(element.path), " [" + Math.round(progress.percent.toFixed(2)) + '%]');
         }).on('end', function () {
             console.log(appConstants.SUCCESS_COLOR, 'Optimized file saved in ' + newFileName);
 
