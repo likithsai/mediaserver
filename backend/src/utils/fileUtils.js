@@ -54,7 +54,7 @@ const streamVideoFiles = (filePath, res) => {
         .toFormat('mp4')
         .withAudioCodec('copy')
         .on('progress', function (progress) {
-            console.log('Processing: ' + progress.percent.toFixed(2) + '%');
+            console.log('Processing: ' + Math.round(progress.percent.toFixed(2)) + '%');
         })
         .on('end', function () {
             console.log('Processing finished !');
@@ -85,7 +85,8 @@ const optimizeVideo = (fileList, params) => {
         ]).on('start', (commandLine) => {
             console.log(appConstants.FGMAGENTA, 'Converting ' + element.path + ' media file');
         }).on('progress', function (progress) {
-            console.log(appConstants.WARN_COLOR, progress.percent.toFixed(2) + '%');
+            console.clear();
+            console.log(appConstants.WARN_COLOR, Math.round(progress.percent.toFixed(2)) + '%');
         }).on('end', function () {
             console.log(appConstants.SUCCESS_COLOR, 'File saved in ' + newFileName);
 
@@ -119,7 +120,7 @@ const generateScreenshots = (path) => {
             console.log(appConstants.FGMAGENTA, 'Generating thumbnails for ' + path);
         })
         .on('progress', function (progress) {
-            console.log(appConstants.WARN_COLOR, progress.percent.toFixed(2) + '%');
+            console.log(appConstants.WARN_COLOR, Math.round(progress.percent.toFixed(2)) + '%');
         })
         .on('end', function (err) {
             if (!err) {
