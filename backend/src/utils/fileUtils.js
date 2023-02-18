@@ -49,7 +49,7 @@ const streamVideoFiles = (filePath, res) => {
     });
 
     return ffmpeg(filePath)
-        .outputOptions(['-movflags isml+frag_keyframe', '-vprofile high', '-threads 0'])
+        .outputOptions(['-movflags isml+frag_keyframe', '-vprofile high'])
         .toFormat('mp4')
         .withAudioCodec('copy')
         .on('progress', function (progress) {

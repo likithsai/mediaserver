@@ -47,47 +47,11 @@ const startApp = () => {
     app.use("/:id/thumbnail", (req, res) => {
         let filteredFile = videos.filter(obj => obj.id == req.params.id)[0];
         res.status(200).json(filteredFile);
-
-        // https://github.com/fluent-ffmpeg/node-fluent-ffmpeg/blob/master/examples/thumbnails.js
     });
 
     //  used to stream video files
     app.get("/:id", (req, res) => {
         fileUtil.streamVideoFiles(videos.filter(obj => obj.id == req.params.id)[0].path, res);
-        // const videoPath = videos.filter(obj => obj.id == req.params.id)[0].path;
-        // fileUtil.streamVideoFiles(videoPath);
-
-        // const videoStat = fs.statSync(videoPath);
-        // const fileSize = videoStat.size;
-        // const videoRange = req.headers.range;
-        // if (videoRange) {
-        //     const parts = videoRange.replace(/bytes=/, "").split("-");
-        //     const start = parseInt(parts[0], 10);
-        //     const end = parts[1] ? parseInt(parts[1], 10) : fileSize - 1;
-        //     const chunksize = (end - start) + 1;
-        //     const file = fs.createReadStream(videoPath, { start, end });
-        //     const head = {
-        //         'Content-Range': `bytes ${start}-${end}/${fileSize}`,
-        //         'Accept-Ranges': 'bytes',
-        //         'Content-Length': chunksize,
-        //         'Content-Type': 'video/mp4',
-        //     };
-        //     res.writeHead(206, head).on('error', function (err) {
-        //         console.log('Error writing stream: ', err);
-        //     });
-        //     file.pipe(res).on('error', function (err) {
-        //         console.log('Error streaming files', err);
-        //     });
-        // } else {
-        //     const head = {
-        //         'Content-Length': fileSize,
-        //         'Content-Type': 'video/mp4',
-        //     };
-        //     res.writeHead(200, head);
-        //     fs.createReadStream(videoPath).pipe(res).on('error', function (err) {
-        //         console.log('Error reading stream', err);
-        //     });
-        // }
     });
 }
 
