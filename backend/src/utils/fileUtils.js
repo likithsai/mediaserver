@@ -39,18 +39,6 @@ const fileDir = (file) => {
 const optimizeVideo = (fileList, params) => {
     fileList.forEach(element => {
         let newFileName = fileDir(element.path) + '/new_' + element.name;
-        // let args = `-y -hide_banner -v panic -stats -i ${element.path} -c:v libx265 -crf 27 -preset veryfast -vtag hvc1 -c:a copy -threads 0 ${newfileName}`;
-        // utils.executeCMD('ffmpeg', args.split(' '), data => {
-        //     console.log(data);
-        // }, () => {
-        //     console.log(appConstants.SUCCESS_COLOR, `finished optimizing ${element.name} video file`);
-        //     if (params.includes(appConstants.GENERATE_SCREENSHOT)) {
-        //         generateScreenshots(newfileName);
-        //     }
-        //     if (params.includes(appConstants.DELETE_ORIGIN_FILE)) {
-        //         deleteOriginalFile(element.path)
-        //     }
-        // });
 
         console.log('Input File: ' + element.path);
         ffmpeg(element.path).addOutputOption([
@@ -66,6 +54,16 @@ const optimizeVideo = (fileList, params) => {
             '-threads 0'
         ]).on('end', function () {
             console.log('File saved in ' + newFileName);
+
+            // if --generate-screenshot param is passed
+            if (params.includes(appConstants.GENERATE_SCREENSHOT)) {
+                generateScreenshots(element.path);
+            }
+
+            // if --delete-original-file is passed
+            if (params.includes(appConstants.DELETE_ORIGIN_FILE)) {
+                deleteOriginalFile(element.path);
+            }
         }).on('error', function (err) {
             console.log('an error happened: ' + err.message);
         }).save(newFileName);
@@ -73,14 +71,22 @@ const optimizeVideo = (fileList, params) => {
 }
 
 const generateScreenshots = (path) => {
-    let newfileName = fileDir(path) + '/' + calculateChecksumOfFile(path);
-    const args = `-y -i ${path} -vf "select='not(mod(n,10))',setpts='N/(30*TB)'" -f image2 iamge%03d.jpg`;
+    const startTime = '00:00:02',
+        gifDuration = 10,
+        gifFPS = 40,
+        newfileName = fileDir(path) + '/' + calculateChecksumOfFile(path) + '.gif';
 
-    utils.executeCMD('ffmpeg', args.split(' '), data => {
-        console.log(data);
-    }, () => {
-        console.log(appConstants.SUCCESS_COLOR, `finished generating screenshot for ${path.basename(path)} video file`);
-    });
+    ffmpeg(path)
+        .setStartTime(startTime)
+        .duration(gifDuration)
+        .fps(gifFPS)
+        .output(newfileName)
+        .on('end', function (err) {
+            if (!err) {
+                console.log('Screenshot generated')
+            }
+        })
+        .run();
 }
 
 const deleteOriginalFile = (path) => {

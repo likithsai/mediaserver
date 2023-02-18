@@ -8,7 +8,7 @@ const appConstants = {
     COMMAND_ARGV: process.argv,
     FOLDER_PATH: process.argv[2],
     GENERATE_SCREENSHOT: '--generate-screenshot',
-    DELETE_ORIGIN_FILE: '--delete-orig-file',
+    DELETE_ORIGIN_FILE: '--delete-original-file',
 
     // colors
     ERROR_COLOR: '\x1b[31m%s\x1b[0m',
