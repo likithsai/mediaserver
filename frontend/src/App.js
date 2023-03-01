@@ -1,15 +1,11 @@
-import React from 'react';
-import Header from './components/Header';
-import Footer from './components/Footer';
-import './scss/App.scss';
+import './App.css';
 
-const App = () => {
-    return (
-        <>
-            <Header />
-            <Footer />
-        </>
-    )
+function App() {
+  return (
+    <div className="App">
+      <p>Sample example</p>
+    </div>
+  );
 }
 
 export default App;
