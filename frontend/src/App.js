@@ -1,10 +1,10 @@
-import './App.css';
+import './assets/css/App.scss';
 
 function App() {
   return (
-    <div className="App">
-      <p>Sample example</p>
-    </div>
+    <h1 className="text-3xl font-bold underline">
+      Hello world!
+    </h1>
   );
 }
 
