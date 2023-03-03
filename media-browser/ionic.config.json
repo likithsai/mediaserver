@@ -1,7 +1,0 @@
-{
-  "name": "media-browser",
-  "integrations": {
-    "capacitor": {}
-  },
-  "type": "react"
-}
