@@ -5,7 +5,7 @@ import Footer from './component/Footer';
 function App() {
   return (
     <>
-      <Header />
+      <Header title="sample" />
       <Footer />
     </>
   );
