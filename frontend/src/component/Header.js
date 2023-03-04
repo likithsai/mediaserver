@@ -1,16 +1,7 @@
 //  header.js
 
 import React from 'react';
-
-interface headerMenuOptions {
-    menuOptionTitle: string;
-    menuOptionIcon: string;
-}
-
-interface headerProps {
-    title: string;
-    menuOptions: headerMenuOptions[];
-}
+import { headerProps } from '../modals/HeaderModal';
 
 const Header = (props: headerProps) => {
     return (
