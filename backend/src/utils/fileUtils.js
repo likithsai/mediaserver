@@ -109,7 +109,9 @@ const optimizeVideos = async (element, params) => {
 
 const processVideos = async (fileList, params) => {
     for (i = 0; i < fileList.length; i++) {
-        await optimizeVideos(fileList[i], params);
+        await optimizeVideos(fileList[i], params).catch(err => {
+            console.log(fileList[i].name);
+        });
     }
 }
 
