@@ -10,7 +10,6 @@ const { appConstants } = require('../const/const');
 var ffmpegPath = require('@ffmpeg-installer/ffmpeg').path;
 var ffprobePath = require('@ffprobe-installer/ffprobe').path;
 var ffmpeg = require('fluent-ffmpeg');
-
 ffmpeg.setFfmpegPath(ffmpegPath);
 ffmpeg.setFfprobePath(ffprobePath);
 var temp = [];
@@ -87,7 +86,6 @@ const optimizeVideos = async (element, params) => {
             // console.log(appConstants.WARN_COLOR, ps.basename(element.path), " --> [" + Math.round(progress.percent.toFixed(2)) + '%]');
             process.stdout.write(ps.basename(element.path) + ' --> ' + Math.round(progress.percent.toFixed(2)) + '%\033[0G');
         }).on('end', function () {
-            console.log(appConstants.SUCCESS_COLOR, 'Optimized file saved in ' + newFileName);
 
             // if --generate-screenshot param is passed
             if (params.includes(appConstants.GENERATE_SCREENSHOT)) {
@@ -99,7 +97,7 @@ const optimizeVideos = async (element, params) => {
                 deleteOriginalFile(element.path);
             }
 
-            return resolve();
+            return resolve('Optimized file saved in ' + newFileName);
         }).on('error', function (err) {
             return reject(err)
         }).save(newFileName);
@@ -108,8 +106,10 @@ const optimizeVideos = async (element, params) => {
 
 const processVideos = async (fileList, params) => {
     for (i = 0; i < fileList.length; i++) {
-        await optimizeVideos(fileList[i], params).catch(err => {
-            console.log(fileList[i].name + ' -->' + err);
+        await optimizeVideos(fileList[i], params).then((msg) => {
+            console.log(appConstants.SUCCESS_COLOR, msg);
+        }).catch(err => {
+            console.log(appConstants.ERROR_COLOR, fileList[i].name + ' --> ' + err);
         });
     }
 }
@@ -152,4 +152,4 @@ const calculateChecksumOfFile = (path) => {
     return crypto.createHash('sha1').update(file).digest("hex");
 }
 
-module.exports = { scanFiles, fileDir, processVideos, streamVideoFiles, deleteOriginalFile };
+module.exports = { scanFiles, processVideos, streamVideoFiles };
