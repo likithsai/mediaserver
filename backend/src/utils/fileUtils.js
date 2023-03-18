@@ -30,7 +30,7 @@ const scanFiles = (path) => {
                 size: utils.formatBytes(fileStat.size),
                 mimetype: mime.getType(absPath.split('.')[1]) || null,
                 hash: calculateChecksumOfFile(absPath),
-                createddate: fileStat.birthtime
+                createddate: fileStat.birthtime.toISOString()
             });
         }
     });
@@ -67,9 +67,9 @@ const streamVideoFiles = (filePath, res) => {
 
 }
 
-const optimizeVideo = (fileList, params) => {
-    fileList.forEach(element => {
-        let newFileName = fileDir(element.path) + '/new_' + element.name;
+const optimizeVideos = async (element, params) => {
+    let newFileName = fileDir(element.path) + '/new_' + element.name;
+    return new Promise((resolve, reject) => {
         ffmpeg(element.path).addOutputOption([
             '-y',
             '-hide_banner',
@@ -82,9 +82,10 @@ const optimizeVideo = (fileList, params) => {
             '-c:a copy',
             '-threads 0'
         ]).on('start', (commandLine) => {
-            console.log(appConstants.FGMAGENTA, 'Converting ' + element.path + ' media file');
+            // console.log(appConstants.FGMAGENTA, 'Converting ' + element.path + ' media file');
         }).on('progress', function (progress) {
-            console.log(appConstants.WARN_COLOR, ps.basename(element.path), " [" + Math.round(progress.percent.toFixed(2)) + '%]');
+            // console.log(appConstants.WARN_COLOR, ps.basename(element.path), " --> [" + Math.round(progress.percent.toFixed(2)) + '%]');
+            process.stdout.write(ps.basename(element.path) + ' --> ' + Math.round(progress.percent.toFixed(2)) + '%\033[0G');
         }).on('end', function () {
             console.log(appConstants.SUCCESS_COLOR, 'Optimized file saved in ' + newFileName);
 
@@ -97,10 +98,19 @@ const optimizeVideo = (fileList, params) => {
             if (params.includes(appConstants.DELETE_ORIGIN_FILE)) {
                 deleteOriginalFile(element.path);
             }
+
+            return resolve();
         }).on('error', function (err) {
             console.log(appConstants.ERROR_COLOR, 'an error happened: ' + err.message);
+            return reject(err)
         }).save(newFileName);
-    });
+    })
+}
+
+const processVideos = async (fileList, params) => {
+    for (i = 0; i < fileList.length; i++) {
+        await optimizeVideos(fileList[i], params);
+    }
 }
 
 const generateScreenshots = (path) => {
@@ -132,7 +142,8 @@ const generateScreenshots = (path) => {
 }
 
 const deleteOriginalFile = (path) => {
-    return path;
+    const filename = ps.basename(path) + '.temp';
+    console.log(filename);
 }
 
 const calculateChecksumOfFile = (path) => {
@@ -140,4 +151,4 @@ const calculateChecksumOfFile = (path) => {
     return crypto.createHash('sha1').update(file).digest("hex");
 }
 
-module.exports = { scanFiles, fileDir, optimizeVideo, streamVideoFiles };
+module.exports = { scanFiles, fileDir, processVideos, streamVideoFiles, deleteOriginalFile };
