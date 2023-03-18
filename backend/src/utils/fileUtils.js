@@ -101,7 +101,6 @@ const optimizeVideos = async (element, params) => {
 
             return resolve();
         }).on('error', function (err) {
-            console.log(appConstants.ERROR_COLOR, 'an error happened: ' + err.message);
             return reject(err)
         }).save(newFileName);
     })
@@ -110,7 +109,7 @@ const optimizeVideos = async (element, params) => {
 const processVideos = async (fileList, params) => {
     for (i = 0; i < fileList.length; i++) {
         await optimizeVideos(fileList[i], params).catch(err => {
-            console.log(fileList[i].name);
+            console.log(fileList[i].name + ' -->' + err);
         });
     }
 }
