@@ -5,8 +5,24 @@ import Footer from './component/Footer';
 function App() {
   return (
     <>
-      <Header title="sample" />
-      <Footer />
+      <Header title="Media Browser" headerOptions={[{
+        title: 'All',
+        icon: '',
+        href: '/all'
+      }, {
+        title: 'Images',
+        icon: '',
+        href: '/images'
+      }, {
+        title: 'Videos',
+        icon: '',
+        href: '/videos'
+      }, {
+        title: 'PDF',
+        icon: '',
+        href: '/pdf'
+      }]} />
+      <Footer title="Made by likith sai" />
     </>
   );
 }

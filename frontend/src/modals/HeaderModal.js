@@ -1,11 +1,12 @@
 //  HeaderModal.js
 
 interface headerMenuOptions {
-    menuOptionTitle: string;
-    menuOptionIcon: string;
+    title: string;
+    icon: string;
+    href: String;
 }
 
 export interface headerProps {
     title: string;
-    menuOptions: headerMenuOptions[];
+    headerOptions: headerMenuOptions[];
 }
