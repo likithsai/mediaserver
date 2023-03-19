@@ -83,8 +83,7 @@ const optimizeVideos = async (element, params) => {
         ]).on('start', (commandLine) => {
             // console.log(appConstants.FGMAGENTA, 'Converting ' + element.path + ' media file');
         }).on('progress', function (progress) {
-            // console.log(appConstants.WARN_COLOR, ps.basename(element.path), " --> [" + Math.round(progress.percent.toFixed(2)) + '%]');
-            process.stdout.write(ps.basename(element.path) + ' --> ' + Math.round(progress.percent.toFixed(2)) + '%\033[0G');
+            process.stdout.write(`${ps.basename(element.path)} -->  ${Math.round(progress.percent.toFixed(2))}% (${progress.timemark})` + '\033[0G');
         }).on('end', function () {
 
             // if --generate-screenshot param is passed
