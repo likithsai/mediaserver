@@ -8,6 +8,7 @@ const fs = require('fs');
 const morgan = require("morgan");
 const fileUtil = require('./src/utils/fileUtils');
 const path = require("path");
+const chokidar = require('chokidar');
 const app = express();
 const PORT = process.env.port || 8000;
 const logStr = `\n:date[iso] :remote-addr :method :url :status :res[content-length] :response-time ms\n:user-agent`;
@@ -24,6 +25,22 @@ app.use(morgan(logStr, {
 
 // app starting point
 const startApp = () => {
+
+    //  watch for new file changes
+    //  https://github.com/paulmillr/chokidar
+    chokidar.watch(process.argv[2], {
+        ignored: /(^|[\/\\])\../, // ignore dotfiles
+        persistent: true
+    }).on('add', path => {
+        console.log(`File ${path} has been added`);
+    }).on('unlink', path => {
+        console.log(`File ${path} has been removed`);
+    }).on('error', error => {
+        console.log(`Watcher error: ${error}`);
+    }).on('ready', () => {
+        console.log('Initial scan complete. Ready for changes');
+    });
+
     app.listen(8000, function () {
         console.log(`Server Listening at`, `\x1b[4mhttp://localhost:${PORT}\x1b[0m`);
         console.log('\x1b[31m%s\x1b[0m', 'Press CNTRL+C to stop server');

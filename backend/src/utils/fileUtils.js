@@ -4,8 +4,8 @@
 const fs = require('fs');
 const ps = require('path');
 const crypto = require('crypto');
-const mime = require('mime');
 const utils = require('./utils');
+const mime = require('mime');
 const { appConstants } = require('../const/const');
 var ffmpegPath = require('@ffmpeg-installer/ffmpeg').path;
 var ffprobePath = require('@ffprobe-installer/ffprobe').path;
@@ -65,8 +65,8 @@ const streamVideoFiles = (filePath, res) => {
 }
 
 const optimizeVideos = async (element) => {
-    let newFileName = fileDir(element.path) + '/new_' + element.name;
-    let videoConvertTime, videoConvertFilesize, videoConvertFrameSize;
+    let newFileName = fileDir(element.path) + '/new_' + element.name,
+        videoConvertTime, videoConvertFilesize;
     return new Promise((resolve, reject) => {
         ffmpeg(element.path).addOutputOption([
             '-y',
@@ -79,11 +79,7 @@ const optimizeVideos = async (element) => {
             '-vtag hvc1',
             '-c:a copy',
             '-threads 0'
-        ]).screenshots({
-            // Will take screens at 20%, 40%, 60% and 80% of the video
-            count: 4,
-            folder: fileDir(element.path)
-        }).on('start', (commandLine) => {
+        ]).on('start', (commandLine) => {
             // console.log(appConstants.FGMAGENTA, 'Converting ' + element.path + ' media file');
         }).on('progress', function (progress) {
             videoConvertTime = progress.timemark;

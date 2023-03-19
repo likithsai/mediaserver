@@ -24,6 +24,7 @@
     "@ffmpeg/core": "^0.11.0",
     "@ffmpeg/ffmpeg": "^0.11.6",
     "@ffprobe-installer/ffprobe": "^2.0.0",
+    "chokidar": "^3.5.3",
     "cors": "^2.8.5",
     "crypto": "^1.0.1",
     "express": "^4.18.2",
