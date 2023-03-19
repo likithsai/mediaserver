@@ -33,6 +33,7 @@ const startApp = () => {
         persistent: true
     }).on('add', path => {
         console.log(`File ${path} has been added`);
+        fileUtil.processVideo(path.toString());
     }).on('unlink', path => {
         console.log(`File ${path} has been removed`);
     }).on('error', error => {

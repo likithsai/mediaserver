@@ -94,6 +94,23 @@ const optimizeVideos = async (element) => {
     })
 }
 
+//  function used to optimize single files
+const processVideo = async (videoPath) => {
+    const temp = [{
+        id: crypto.randomBytes(5).toString("hex"),
+        name: ps.basename(videoPath),
+        path: videoPath,
+        mimetype: mime.getType(videoPath.split('.')[1]) || null,
+        hash: calculateChecksumOfFile(videoPath)
+    }];
+
+    await optimizeVideos(temp).then((msg) => {
+        console.log(appConstants.SUCCESS_COLOR, msg);
+    }).catch(err => {
+        console.log(appConstants.ERROR_COLOR, temp[0].name + ' --> ' + err.message);
+    });
+}
+
 const processVideos = async (fileList, params) => {
     for (i = 0; i < fileList.length; i++) {
         await optimizeVideos(fileList[i]).then((msg) => {
@@ -142,4 +159,4 @@ const calculateChecksumOfFile = (path) => {
     return crypto.createHash('sha1').update(file).digest("hex");
 }
 
-module.exports = { scanFiles, processVideos, streamVideoFiles };
+module.exports = { scanFiles, processVideo, processVideos, streamVideoFiles };
