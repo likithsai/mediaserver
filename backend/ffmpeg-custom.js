@@ -5,7 +5,7 @@ const { appConstants } = require('./src/const/const');
 if (appConstants.FOLDER_PATH) {
     console.log(appConstants.WARN_COLOR, appConstants.APPNAME + ' ' + appConstants.APPVERSION);
     console.log(appConstants.DEFAULT_COLOR, appConstants.APPDESC + '\n');
-    fileUtil.processVideos(fileUtil.scanFiles(appConstants.FOLDER_PATH), appConstants.COMMAND_ARGV);
+    fileUtil.processVideos(fileUtil.scanFiles(appConstants.FOLDER_PATH));
     // fileUtil.processVideos([
     //     {
     //         id: 'd123567016',
@@ -34,7 +34,7 @@ if (appConstants.FOLDER_PATH) {
     //         hash: '15bfe142b06571dd84d3d6952a01cbf324ca3f36',
     //         createddate: '2022-12-08T06:38:53.754Z'
     //     }
-    // ], appConstants.COMMAND_ARGV);
+    // ]);
 } else {
     console.log(appConstants.ERROR_COLOR, 'Please enter folder path!');
 }

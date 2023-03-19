@@ -59,15 +59,14 @@ const streamVideoFiles = (filePath, res) => {
         })
         .on('error', function (err, stdout, stderr) {
             console.log('an error happened: ' + err.message);
-            console.log('ffmpeg stdout: ' + stdout);
-            console.log('ffmpeg stderr: ' + stderr);
         })
         .pipe(res, { end: true });
 
 }
 
-const optimizeVideos = async (element, params) => {
+const optimizeVideos = async (element) => {
     let newFileName = fileDir(element.path) + '/new_' + element.name;
+    let videoConvertTime, videoConvertFilesize, videoConvertFrameSize;
     return new Promise((resolve, reject) => {
         ffmpeg(element.path).addOutputOption([
             '-y',
@@ -80,35 +79,31 @@ const optimizeVideos = async (element, params) => {
             '-vtag hvc1',
             '-c:a copy',
             '-threads 0'
-        ]).on('start', (commandLine) => {
+        ]).screenshots({
+            // Will take screens at 20%, 40%, 60% and 80% of the video
+            count: 4,
+            folder: fileDir(element.path)
+        }).on('start', (commandLine) => {
             // console.log(appConstants.FGMAGENTA, 'Converting ' + element.path + ' media file');
         }).on('progress', function (progress) {
-            process.stdout.write(`${ps.basename(element.path)} -->  ${Math.round(progress.percent.toFixed(2))}% (${progress.timemark})` + '\033[0G');
+            videoConvertTime = progress.timemark;
+            videoConvertFilesize = progress.targetSize;
+
+            process.stdout.write(`${ps.basename(element.path)} -->  ${Math.round(progress.percent.toFixed(2))}% (${videoConvertTime})` + '\033[0G');
         }).on('end', function () {
-
-            // if --generate-screenshot param is passed
-            if (params.includes(appConstants.GENERATE_SCREENSHOT)) {
-                generateScreenshots(element.path);
-            }
-
-            // if --delete-original-file is passed
-            if (params.includes(appConstants.DELETE_ORIGIN_FILE)) {
-                deleteOriginalFile(element.path);
-            }
-
-            return resolve('Optimized file saved in ' + newFileName);
+            return resolve(`Optimized file saved in ${newFileName}\nTime: ${videoConvertTime}, Filesize: ${utils.formatBytes(videoConvertFilesize)}`);
         }).on('error', function (err) {
-            return reject(err)
+            return reject(err.message)
         }).save(newFileName);
     })
 }
 
 const processVideos = async (fileList, params) => {
     for (i = 0; i < fileList.length; i++) {
-        await optimizeVideos(fileList[i], params).then((msg) => {
+        await optimizeVideos(fileList[i]).then((msg) => {
             console.log(appConstants.SUCCESS_COLOR, msg);
         }).catch(err => {
-            console.log(appConstants.ERROR_COLOR, fileList[i].name + ' --> ' + err);
+            console.log(appConstants.ERROR_COLOR, fileList[i].name + ' --> ' + err.message);
         });
     }
 }
