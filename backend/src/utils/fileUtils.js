@@ -138,4 +138,4 @@ const calculateChecksumOfFile = (path) => {
     return crypto.createHash('sha1').update(file).digest("hex");
 }
 
-module.exports = { scanFiles, processVideo, processVideos, streamVideoFiles };
+module.exports = { scanFiles, processVideos, streamVideoFiles };
