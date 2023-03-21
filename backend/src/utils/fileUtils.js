@@ -104,35 +104,6 @@ const processVideos = async (fileList, params) => {
     }
 }
 
-const generateScreenshots = (path) => {
-    const startTime = '00:00:02',
-        gifDuration = 10,
-        gifFPS = 40,
-        newfileName = fileDir(path) + '/' + calculateChecksumOfFile(path) + '.gif';
-
-    ffmpeg(path)
-        .setStartTime(startTime)
-        .duration(gifDuration)
-        .fps(gifFPS)
-        .output(newfileName)
-        .on('start', (commandLine) => {
-            console.log(appConstants.FGMAGENTA, 'Generating thumbnails for ' + path);
-        })
-        .on('progress', function (progress) {
-            console.log(appConstants.WARN_COLOR, path, " [" + Math.round(progress.percent.toFixed(2)) + '%]');
-        })
-        .on('end', function (err) {
-            if (!err) {
-                console.log(appConstants.SUCCESS_COLOR, 'Screenshot generated')
-            }
-        })
-        .on('error', function (err) {
-            console.log(appConstants.ERROR_COLOR, 'an error happened: ' + err.message);
-        })
-        .run();
-}
-
-
 const calculateChecksumOfFile = (path) => {
     const file = fs.readFileSync(path);
     return crypto.createHash('sha1').update(file).digest("hex");
