@@ -5,6 +5,7 @@ const { appConstants } = require('./src/const/const');
 if (appConstants.FOLDER_PATH) {
     console.log(appConstants.WARN_COLOR, appConstants.APPNAME + ' ' + appConstants.APPVERSION);
     console.log(appConstants.DEFAULT_COLOR, appConstants.APPDESC + '\n');
+    console.log(appConstants.WARN_COLOR, `Scanning files ...`);
     fileUtil.processVideos(fileUtil.scanFiles(appConstants.FOLDER_PATH));
     // fileUtil.processVideos([
     //     {
