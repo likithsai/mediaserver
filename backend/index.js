@@ -6,7 +6,6 @@ const expressip = require('express-ip');
 const cors = require("cors");
 const fs = require('fs');
 const morgan = require("morgan");
-const fileUtil = require('./src/utils/fileUtils');
 const path = require("path");
 const chokidar = require('chokidar');
 const app = express();
@@ -33,7 +32,6 @@ const startApp = () => {
         persistent: true
     }).on('add', path => {
         console.log(`File ${path} has been added`);
-        fileUtil.processVideo(path.toString());
     }).on('unlink', path => {
         console.log(`File ${path} has been removed`);
     }).on('error', error => {
