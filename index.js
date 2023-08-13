@@ -8,6 +8,7 @@ const fs = require('fs');
 const morgan = require("morgan");
 const path = require("path");
 const chokidar = require('chokidar');
+const fileUtil = require('./src/utils/fileUtils');
 const app = express();
 const PORT = process.env.port || 8000;
 const logStr = `\n:date[iso] :remote-addr :method :url :status :res[content-length] :response-time ms\n:user-agent`;
