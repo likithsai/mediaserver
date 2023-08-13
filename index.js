@@ -70,6 +70,11 @@ const startApp = () => {
     app.get("/:id", (req, res) => {
         fileUtil.streamVideoFiles(videos.filter(obj => obj.id == req.params.id)[0].path, res);
     });
+
+    //The 404 Route (ALWAYS Keep this as the last route)
+    app.get('*', function (req, res) {
+        res.status(400).json({ statue: 'error', message: 'server error' });
+    });
 }
 
 // check if path is passed or not
