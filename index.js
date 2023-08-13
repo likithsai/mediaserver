@@ -19,6 +19,7 @@ app.use(expressip().getIpInfoMiddleware);
 app.use(cors());
 app.use(express.urlencoded({ extended: false }));
 app.use(morgan(logStr));
+app.use(express.static(__dirname + '/template/'));
 app.use(morgan(logStr, {
     stream: fs.createWriteStream(path.join(__dirname, 'access.log'), { flags: 'a' })
 }));
@@ -47,7 +48,7 @@ const startApp = () => {
     });
 
     app.get("/", (req, res) => {
-        res.sendFile(__dirname + "/template/index.html");
+        res.sendFile(__dirname + "/template/frontend");
     });
 
     //  used to scan all the files and optimise the vidoes
